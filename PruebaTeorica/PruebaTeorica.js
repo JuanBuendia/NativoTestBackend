@@ -61,25 +61,92 @@ for (let index = 0; index < numbers.length; index++) {
 console.log(line);
 
 //1.7
-function permutaciones(string, raiz = '') {
-    if (string.length == 1) {     // último caso
-        return [raiz + string];
-    } else {
-        let res = [];
-        for (let i=0; i < string.length; i++) {
-            // ir tomando cada uno de los caracteres como raiz
-            // como string va lo que está antes+después de ese caracter
-            // obtener recursivamente el array de permutaciones
-            res.push(
-                 ...permutaciones(string.substr(0,i) + string.substr(i+1), string[i])
-                    .map(x=>raiz+x)
-            );
-        }
-        return res;
+function permutaciones(string, raiz = "") {
+  if (string.length == 1) {
+    return [raiz + string];
+  } else {
+    let res = [];
+    for (let i = 0; i < string.length; i++) {
+      res.push(
+        ...permutaciones(
+          string.substr(0, i) + string.substr(i + 1),
+          string[i]
+        ).map((x) => raiz + x)
+      );
     }
+    return res;
+  }
 }
 
-// ------ Ejemplo ------ //
-var resultado = new Set(permutaciones('abc'));
+var resultado = new Set(permutaciones("abc"));
 
 console.log(resultado);
+
+//Patrones de diseño
+//Creacional - Builder
+
+let Task = function (name, description, estate, dueDate) {
+  this.name = name;
+  this.description = description;
+  this.estate = estate;
+  this.dueDate = dueDate;
+};
+
+let TaskBuilder = function () {
+  let name;
+  let description;
+  let estate = false;
+  let dueDate;
+
+  return {
+    setName: function (name) {
+      this.name = name;
+      return this;
+    },
+    setDescription: function (description) {
+      this.description = description;
+      return this;
+    },
+    setState: function (estate) {
+      this.estate = estate;
+      return this;
+    },
+    setDueDate: function (dueDate) {
+      this.dueDate = dueDate;
+      return this;
+    },
+    build: function () {
+      return new Task(name, description, estate, dueDate);
+    },
+  };
+};
+
+//Patron estuctural
+
+const mixin = {
+  getName() {
+      return this.name;
+  },
+  getAutor() {
+      return this.autor;
+  },
+  getEstate(){
+    return this.estate;
+  },
+  getDesc(){
+    return this.description;
+  }
+};
+
+class Tasks {
+  constructor(name = '', autor = '', estate = false, description = '') {
+      this.name = name;
+      this.autor = autor;
+      this.estate = estate;
+      this.description = description;
+  }
+}
+
+Object.assign(Tasks.prototype, mixin);
+
+//Patron de comportamiento - observer
